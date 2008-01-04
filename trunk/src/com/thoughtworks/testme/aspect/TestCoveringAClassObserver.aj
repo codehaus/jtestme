@@ -19,15 +19,15 @@ import static com.thoughtworks.testme.aspect.TestCoveringAClassObserverHelper.*;
 
 public aspect TestCoveringAClassObserver {
 	pointcut allTestMethods(TestCase test): 
-		target(test) &&								// capture the TestCase
-		execution(public void TestCase+.test*())	// and advise execution of any JUnit test methods
+		execution(public void TestCase+.test*()) &&  // advise execution of any JUnit test methods
+      target(test)                                 // and capture that TestCase instance
 	;
 
 	before(TestCase test):
-		cflow(allTestMethods(test)) &&							// within the control flow of the allTestMethods advice
+		cflow(allTestMethods(test)) &&					              	     	// within the control flow of the allTestMethods advice
 		(execution(!private * *(*)) || execution(!private * *())) &&		// when executing any non-private method
 		(execution(* !TestCase+.*()) || execution(* !TestCase+.*(*))) &&	// that is not in the test case class
-		within (!com.thoughtworks.testme..*)								// and not within any JTestMe class
+		within (!com.thoughtworks.testme..*)							      	// and not within any JTestMe class
 		{
 			recordLink(thisJoinPointStaticPart.getSourceLocation(), test);
 		}
